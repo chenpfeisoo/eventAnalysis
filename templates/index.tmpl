@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>index</title>
+</head>
+<body>
+
+{{ range $v := .events}}
+<table border="1">
+　<tr>
+　<td colspan="2">pod 拉取镜像耗时</td>
+　</tr>
+　<tr>
+　   <td>{{ $v.EventName }}</td>
+　   <td>{{ $v.ImageName }}</td>
+     <td>{{ $v.PullimageTime }}</td>
+　</tr>
+</table>
+{{ end }}
+</body>
