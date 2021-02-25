@@ -3,20 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>index</title>
-</head>
-<body>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="pragma"content="no-cache">
+    <meta http-equiv="expires"content="0">
+    <title>K8sEvent信息分析平台</title>
+    <style>
+        body{
+            background: #F3F3F4;
+            font-family: PingFangSC-Regular, sans-serif;
+            margin: 0px;
+            font-size: 16px;
+        }
+        ul {
+            margin: 0;
+            padding: 0;
 
-{{ range $v := .events}}
-<table border="1">
-　<tr>
-　<td colspan="2">pod 拉取镜像耗时</td>
-　</tr>
-　<tr>
-　   <td>{{ $v.EventName }}</td>
-　   <td>{{ $v.ImageName }}</td>
-     <td>{{ $v.PullimageTime }}</td>
-　</tr>
-</table>
-{{ end }}
+        }
+
+        h2{
+            margin: 12px 20px 22px 32px;
+        }
+        img{
+            position: relative;
+            top: 9px;
+        }
+        span{
+            margin-left: 9px;
+        }
+        .clearfloat {
+            zoom: 1;
+        }
+        .clearfloat::after {
+            display: block;
+            clear: both;
+            content: "";
+            visibility: hidden;
+            height: 0;
+        }
+
+        .tab-list {
+            position: relative;
+            background: #fff;
+            height: 60px;
+            border-bottom:1.5px solid #2e4250;
+        }
+
+        .tab-list .tab-itom {
+            float: left;
+            list-style: none;
+            margin-right: 4px;
+        }
+
+        .tab-itom .test-label {
+            position: relative;
+            display: block;
+            width: 210px;
+            height: 50px;
+            line-height: 50px;
+            top: 10px;
+            left: 30px;
+            text-align: center;
+        }
+
+        .tab-itom .tab-box {
+            /* 设置绝对定位方便定位相对于tab-list栏的位置，同时为了可以使用z-index属性 */
+            position: absolute;
+            left: 30px;
+            top: 100px;
+            width: calc(100% - 80px);
+            height: 248px;
+            /* 设置层级最低方便选中状态遮挡 */
+            z-index: 0;
+            display: none
+        }
+        /* 用绝对定位使按钮脱离文档流，透明度设置为0将其隐藏 */
+        input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+        /* 利用选择器实现  tab切换 */
+
+        /* 当radio为选中状态时设置它的test-label兄弟元素的属性 */
+        input[type="radio"]:checked + .test-label {
+            /* 为了修饰存在的边框背景属性 */
+            background: #2e4250;
+            color:#fff;
+            /* 为了修饰存在的层级使下边框遮挡下方div的上边框 */
+            z-index: 10;
+        }
+        /* 当radio为选中状态时设置与它同级的tab-box元素的显示层级 */
+        input[type="radio"]:checked ~ .tab-box {
+            /* 选中时提升层级，遮挡其他tab页达到选中切换的效果 */
+            z-index: 5;
+            display: block
+        }
+
+        /*表格样式*/
+			table {
+				width: 100%;
+				background: #ccc;
+				margin: 10px auto;
+				border-collapse: collapse;
+                border: 1px solid #ccc;
+                text-align: center;
+            }
+            tr{
+                height: 45px;
+                border-bottom: 1px solid #ddd;
+            }
+			th {
+				background: #f5f5f5;
+				font-weight: normal;
+			}
+			td {
+				background: #fff;
+                font-size: 14px;
+                color: #666;
+			}
+			tr:hover {
+				background: #f5f5f5;
+			}
+			td a {
+				color: #06f;
+				text-decoration: none;
+                position: relative;
+                top: 7px;
+			}
+			td a:hover {
+				color: #06f;
+				text-decoration: underline;
+			}
+    </style>
+</head>
+
+<body class="clearfloat">
+    <h2><img src="../static/img/logo.png"><span>K8sEvent信息分析平台</span></h2>
+    <ul class="tab-list clearfloat">
+         <li class="tab-itom">
+            <input type="radio" id="testTabRadio1" class="test-radio" name="tab" checked="checked">
+            <label class="test-label" for="testTabRadio1">镜像拉取耗时统计</label>
+            <div class="tab-box">
+                <table id="service">
+                    <tr>
+                          <th>负载名称</th>
+                          <th>镜像名称</th>
+                          <th>镜像下载时间</th>
+                    </tr>
+                    {{ range $v := .events}}
+                         <tr>
+                                    <td>
+                                        {{$v.EventName}} </br>
+                                    </td>
+                                    <td>
+                                        {{$v.ImageName}} </br>
+                                    </td>
+                                    <td>
+                                        {{$v.PullimageTime}} </br>
+                                    </td>
+                         </tr>
+                         {{end}}
+                </table>
+            </div>
+        </li>
+        <li class="tab-itom">
+            <input type="radio" id="testTabRadio2" class="test-radio" name="tab">
+            <label class="test-label" for="testTabRadio2">pod启动耗时统计</label>
+            <div class="tab-box">
+                    <table id="service">
+                    <tr>
+                        <th>负载名称</th>
+                        <th>副本个数</th>
+                        <th>启动时间</th>
+                    </tr>
+                    {{ range $v := .events}}
+                      <tr>
+                          <td>
+                             {{$v.EventName}} </br>
+                           </td>
+                           <td>
+                             {{$v.ImageName}} </br>
+                           </td>
+                           <td>
+                             {{$v.PullimageTime}} </br>
+                            </td>
+                      </tr>
+                      {{end}}
+                     </table>
+            </div>
+        </li>
+        <li class="tab-itom">
+                <input type="radio" id="testTabRadio3" class="test-radio" name="tab">
+                <label class="test-label" for="testTabRadio3">namesapce删除耗时统计</label>
+                <div class="tab-box">
+                        <table id="service">
+                                            <tr>
+                                                <th>命名空间</th>
+                                                <th>删除时长</th>
+                                                <th>最终状态</th>
+                                            </tr>
+                                            {{ range $v := .events}}
+                                              <tr>
+                                                  <td>
+                                                     {{$v.EventName}} </br>
+                                                   </td>
+                                                   <td>
+                                                     {{$v.ImageName}} </br>
+                                                   </td>
+                                                   <td>
+                                                     {{$v.PullimageTime}} </br>
+                                                    </td>
+                                              </tr>
+                                              {{end}}
+                                             </table>
+                </div>
+            </li>
+    </ul>
 </body>
+
+</html>
